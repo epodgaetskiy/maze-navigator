@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/maze-navigator/precache-manifest.fddbe517ff612c550508a3d1bf1fecc0.js"
+  "/maze-navigator/precache-manifest.9dc069a4610dd1c09be8c8676d6e84d9.js"
 );
 
 workbox.clientsClaim();

@@ -1,11 +1,11 @@
 {
-  "main.js": "/maze-navigator/static/js/main.4bcc00a3.chunk.js",
-  "main.js.map": "/maze-navigator/static/js/main.4bcc00a3.chunk.js.map",
+  "main.js": "/maze-navigator/static/js/main.e2491cc3.chunk.js",
+  "main.js.map": "/maze-navigator/static/js/main.e2491cc3.chunk.js.map",
   "runtime~main.js": "/maze-navigator/static/js/runtime~main.ecfa6432.js",
   "runtime~main.js.map": "/maze-navigator/static/js/runtime~main.ecfa6432.js.map",
   "static/js/2.12c00691.chunk.js": "/maze-navigator/static/js/2.12c00691.chunk.js",
   "static/js/2.12c00691.chunk.js.map": "/maze-navigator/static/js/2.12c00691.chunk.js.map",
   "index.html": "/maze-navigator/index.html",
-  "precache-manifest.fddbe517ff612c550508a3d1bf1fecc0.js": "/maze-navigator/precache-manifest.fddbe517ff612c550508a3d1bf1fecc0.js",
+  "precache-manifest.9dc069a4610dd1c09be8c8676d6e84d9.js": "/maze-navigator/precache-manifest.9dc069a4610dd1c09be8c8676d6e84d9.js",
   "service-worker.js": "/maze-navigator/service-worker.js"
 }
