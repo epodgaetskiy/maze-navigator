@@ -55,7 +55,10 @@ export default class App extends React.Component {
       step: 0
     };
 
-    this.snapshotUserSteps = this.getSnapshotUserSteps();
+    this.snapshotUserSteps = this.getSnapshotUserSteps(
+      this.state.user,
+      this.state.way
+    );
   }
 
   getDirectionUserBySymbol = symbol => {
@@ -72,23 +75,6 @@ export default class App extends React.Component {
         return "bottom";
     }
   };
-
-  // getSteps = (way, initialUserDirection) =>
-  //   way.reduce((acc, [currentX, currentY], index, paths) => {
-  //     if (
-  //       currentX === paths[index + 1][0] &&
-  //       currentY === paths[index + 1][1] + 1
-  //     ) {
-  //       acc[index] = {
-  //         action: actionByUserDirection["top"][initialUserDirection],
-  //         nextPosition: {
-  //           x: paths[index + 1][0],
-  //           y: paths[index + 1][1]
-  //         }
-  //       };
-  //     }
-  //     return acc;
-  //   }, {});
 
   getInitialState = () => {
     const matrix = [];
@@ -178,11 +164,33 @@ export default class App extends React.Component {
     };
   };
 
-  getSnapshotUserSteps = () => {
+  getNumberRepeatingForwardAction = (
+    currentIndex,
+    items,
+    numberRepeatingSteps
+  ) => {
+    if (
+      currentIndex < items.length - 1 &&
+      items[currentIndex + 1].type === "forward"
+    ) {
+      return this.getNumberRepeatingForwardAction(
+        currentIndex + 1,
+        items,
+        numberRepeatingSteps + 1
+      );
+    } else {
+      return {
+        ...items[currentIndex],
+        numberRepeatingSteps
+      };
+    }
+  };
+
+  getSnapshotUserSteps = (initialUser, initialWay) => {
     const snapshotUserSteps = [];
     let currentStep = 0;
-    let user = { ...this.state.user };
-    let way = [...this.state.way];
+    let user = { ...initialUser };
+    let way = [...initialWay];
 
     while (currentStep < way.length - 1) {
       const iteration = this.getNeedAction(currentStep, user, way);
@@ -191,27 +199,6 @@ export default class App extends React.Component {
       snapshotUserSteps.push(iteration);
     }
 
-    const getNumberRepeatingForwardAction = (currentIndex, items, n) => {
-      if (currentIndex < items.length - 1) {
-        if (items[currentIndex + 1].type === "forward") {
-          return getNumberRepeatingForwardAction(
-            currentIndex + 1,
-            items,
-            n + 1
-          );
-        } else {
-          return {
-            ...items[currentIndex],
-            n
-          };
-        }
-      } else {
-        return {
-          ...items[currentIndex],
-          n
-        };
-      }
-    };
     const optimezeSnapshotUserSteps = [];
     let i = 0;
     while (i < snapshotUserSteps.length) {
@@ -219,9 +206,13 @@ export default class App extends React.Component {
         optimezeSnapshotUserSteps.push(snapshotUserSteps[i]);
         i = i + 1;
       } else {
-        const item = getNumberRepeatingForwardAction(i, snapshotUserSteps, 1);
+        const item = this.getNumberRepeatingForwardAction(
+          i,
+          snapshotUserSteps,
+          1
+        );
         optimezeSnapshotUserSteps.push(item);
-        i = i + item.n;
+        i = i + item.numberRepeatingSteps;
       }
     }
 
@@ -238,64 +229,6 @@ export default class App extends React.Component {
       }
       return acc;
     }, false);
-
-  // changeUserDirection = direction => () => {
-  //   this.setState(state => ({
-  //     user: {
-  //       ...state.user,
-  //       direction
-  //     }
-  //   }));
-  // };
-
-  // moveUserToNextStep = currentStep => () => {
-  //   this.setState(state => ({
-  //     user: {
-  //       ...state.user,
-  //       x: state.way[currentStep + 1][0],
-  //       y: state.way[currentStep + 1][1]
-  //     },
-  //     currentStep: currentStep + 1
-  //   }));
-  // };
-
-  // getNeedAction = (currentStep, currentUserDirection, way) => {
-  //   let needMoving = "";
-  //   if (
-  //     way[currentStep][0] === way[currentStep + 1][0] &&
-  //     way[currentStep][1] - 1 === way[currentStep + 1][1]
-  //   ) {
-  //     needMoving = "top";
-  //   }
-  //   if (
-  //     way[currentStep][0] === way[currentStep + 1][0] &&
-  //     way[currentStep][1] + 1 === way[currentStep + 1][1]
-  //   ) {
-  //     needMoving = "bottom";
-  //   }
-  //   if (
-  //     way[currentStep][0] - 1 === way[currentStep + 1][0] &&
-  //     way[currentStep][1] === way[currentStep + 1][1]
-  //   ) {
-  //     needMoving = "left";
-  //   }
-  //   if (
-  //     way[currentStep][0] + 1 === way[currentStep + 1][0] &&
-  //     way[currentStep][1] === way[currentStep + 1][1]
-  //   ) {
-  //     needMoving = "right";
-  //   }
-
-  //   const actionType =
-  //     actionByCurrentUserDirection[needMoving][currentUserDirection];
-  //   return {
-  //     type: actionType,
-  //     action:
-  //       actionType !== "forward"
-  //         ? this.changeUserDirection(needMoving)
-  //         : this.moveUserToNextStep(currentStep)
-  //   };
-  // };
 
   renderMatrix = matrix =>
     matrix.map((rowData, positionY) => (
@@ -329,8 +262,6 @@ export default class App extends React.Component {
 
   render() {
     const { matrix, step } = this.state;
-    console.log(this.snapshotUserSteps);
-    console.log(step);
     const snapshotUserStep = this.snapshotUserSteps[step];
     return (
       <Container>
@@ -343,8 +274,9 @@ export default class App extends React.Component {
                 disabled={snapshotUserStep.type !== "forward"}
                 onClick={this.handleClickAction(snapshotUserStep.action)}
               >
-                Go {snapshotUserStep.n}{" "}
-                {`step${snapshotUserStep.n > 1 ? "s" : ""}`} forward
+                Go {snapshotUserStep.numberRepeatingSteps}{" "}
+                {`step${snapshotUserStep.numberRepeatingSteps > 1 ? "s" : ""}`}{" "}
+                forward
               </button>
             </div>
             <div style={{ marginBottom: "10px" }}>
