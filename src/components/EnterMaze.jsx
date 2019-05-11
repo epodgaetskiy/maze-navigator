@@ -1,7 +1,5 @@
 import React from "react";
 
-const separateSymbol = "↵";
-
 export default class EnterMaze extends React.PureComponent {
   state = {
     matrixValue: ""
