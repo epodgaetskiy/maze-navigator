@@ -1,8 +1,10 @@
 import React from "react";
+import styled from "styled-components";
+import { getPath } from "../finder/finder";
 import Row from "./Row";
 import Cell from "./Cell";
-import { getPath } from "../finder/finder";
-import styled from "styled-components";
+import EnterMaze from "./EnterMaze";
+import Navigation from "./Navigation";
 
 const Container = styled.div`
   display: flex;
@@ -52,6 +54,7 @@ export default class App extends React.Component {
 
     this.state = {
       ...this.getInitialState(),
+      initialMatrix: null,
       step: 0
     };
 
@@ -60,6 +63,12 @@ export default class App extends React.Component {
       this.state.way
     );
   }
+
+  updateInitialMatrix = value => {
+    this.setState({
+      initialMatrix: value
+    });
+  };
 
   getDirectionUserBySymbol = symbol => {
     switch (symbol) {
@@ -264,53 +273,20 @@ export default class App extends React.Component {
     const { matrix, step } = this.state;
     const snapshotUserStep = this.snapshotUserSteps[step];
     return (
-      <Container>
-        <div>{matrix.length > 0 && this.renderMatrix(matrix)}</div>
-        {snapshotUserStep ? (
-          <div style={{ marginLeft: "20px" }}>
-            <div style={{ marginBottom: "10px" }}>
-              <button
-                type="button"
-                disabled={snapshotUserStep.type !== "forward"}
-                onClick={this.handleClickAction(snapshotUserStep.action)}
-              >
-                Go {snapshotUserStep.numberRepeatingSteps}{" "}
-                {`step${snapshotUserStep.numberRepeatingSteps > 1 ? "s" : ""}`}{" "}
-                forward
-              </button>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <button
-                type="button"
-                disabled={snapshotUserStep.type !== "around"}
-                onClick={this.handleClickAction(snapshotUserStep.action)}
-              >
-                Turn around
-              </button>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <button
-                type="button"
-                disabled={snapshotUserStep.type !== "left"}
-                onClick={this.handleClickAction(snapshotUserStep.action)}
-              >
-                Turn left
-              </button>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <button
-                type="button"
-                disabled={snapshotUserStep.type !== "right"}
-                onClick={this.handleClickAction(snapshotUserStep.action)}
-              >
-                Turn right
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p style={{ marginLeft: "20px" }}>Congratulations</p>
-        )}
-      </Container>
+      <div>
+        <EnterMaze updateInitialMatrix={this.updateInitialMatrix} />
+        <Container>
+          <div>{matrix.length > 0 && this.renderMatrix(matrix)}</div>
+          {snapshotUserStep ? (
+            <Navigation
+              snapshotUserStep={snapshotUserStep}
+              handleClickAction={this.handleClickAction}
+            />
+          ) : (
+            <p style={{ marginLeft: "20px" }}>Congratulations</p>
+          )}
+        </Container>
+      </div>
     );
   }
 }
