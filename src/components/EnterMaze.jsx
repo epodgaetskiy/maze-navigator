@@ -1,10 +1,10 @@
 import React from "react";
 
+const separateSymbol = "↵";
+
 export default class EnterMaze extends React.PureComponent {
   state = {
-    matrixValue: "",
-    countRows: 0,
-    countColumns: 0
+    matrixValue: ""
   };
 
   onChange = event => {
@@ -13,29 +13,25 @@ export default class EnterMaze extends React.PureComponent {
     });
   };
 
-  calculateMaze = () => {};
+  calculateMaze = () => {
+    let index = 0;
+    const updateMatrixValue = this.state.matrixValue
+      .split("")
+      .reduce((acc, item) => {
+        if (item !== "\n") {
+          if (!acc[index]) acc[index] = [];
+          acc[index].push(item);
+        } else {
+          index++;
+        }
+        return acc;
+      }, []);
+    this.props.updateMatrix(updateMatrixValue);
+  };
 
   render() {
     return (
       <div>
-        <div>
-          <label htmlFor="countRows">Enter count of rows</label>
-          <input
-            id="countRows"
-            type="text"
-            name="countRows"
-            onChange={this.onChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="countColumns">Enter count of columns</label>
-          <input
-            id="countColumns"
-            type="text"
-            name="countColumns"
-            onChange={this.onChange}
-          />
-        </div>
         <div>
           <textarea
             name="matrixValue"

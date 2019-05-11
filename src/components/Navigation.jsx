@@ -11,7 +11,7 @@ export default class Navigation extends React.PureComponent {
             disabled={snapshotUserStep.type !== "forward"}
             onClick={handleClickAction(snapshotUserStep.action)}
           >
-            Go {snapshotUserStep.numberRepeatingSteps}{" "}
+            Go {snapshotUserStep.numberRepeatingSteps || "n"}{" "}
             {`step${snapshotUserStep.numberRepeatingSteps > 1 ? "s" : ""}`}{" "}
             forward
           </button>

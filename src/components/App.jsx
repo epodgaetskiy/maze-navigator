@@ -10,17 +10,6 @@ const Container = styled.div`
   display: flex;
 `;
 
-const initialMatrix = [
-  ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
-  ["#", " ", " ", " ", " ", " ", " ", " ", " ", "#"],
-  ["#", " ", " ", "#", "#", "#", "#", "#", " ", "#"],
-  ["#", " ", " ", "#", " ", " ", " ", "#", " ", "#"],
-  ["#", " ", " ", "#", "v", " ", " ", "#", " ", "#"],
-  ["#", " ", " ", "#", "#", "#", " ", "#", " ", "#"],
-  ["#", " ", " ", " ", " ", " ", " ", "#", " ", "#"],
-  ["#", "#", "#", "#", "#", "#", "#", "#", " ", "#"]
-];
-
 const actionByCurrentUserDirection = {
   top: {
     top: "forward",
@@ -53,20 +42,23 @@ export default class App extends React.Component {
     super();
 
     this.state = {
-      ...this.getInitialState(),
-      initialMatrix: null,
+      user: null,
+      way: null,
+      matrix: null,
       step: 0
     };
 
-    this.snapshotUserSteps = this.getSnapshotUserSteps(
-      this.state.user,
-      this.state.way
-    );
+    this.snapshotUserSteps = [];
   }
 
-  updateInitialMatrix = value => {
+  updateMatrix = value => {
+    const { user, way, matrix } = this.getStateByMatrix(value);
+    this.snapshotUserSteps = this.getSnapshotUserSteps(user, way);
     this.setState({
-      initialMatrix: value
+      user,
+      way,
+      matrix,
+      step: 0
     });
   };
 
@@ -85,16 +77,21 @@ export default class App extends React.Component {
     }
   };
 
-  getInitialState = () => {
-    const matrix = [];
+  getStateByMatrix = matrix => {
+    const maxX = matrix[0].length - 1;
+    const maxY = matrix.length - 1;
+    const normalizeMatrix = [];
     const user = {};
     const exits = [];
-    initialMatrix.forEach((row, oY) => {
-      matrix[oY] = row.map((item, oX) => {
-        if (item === " " && (oY === 0 || oY === 7)) {
+    matrix.forEach((row, oY) => {
+      normalizeMatrix[oY] = row.map((item, oX) => {
+        if (item === " " && (oY === 0 || oY === maxY)) {
           exits.push([oX, oY]);
         }
-        if (item === " " && (oY !== 0 && oY !== 7 && (oX === 0 || oX === 9))) {
+        if (
+          item === " " &&
+          (oY !== 0 && oY !== maxY && (oX === 0 || oX === maxX))
+        ) {
           exits.push([oX, oY]);
         }
         switch (item) {
@@ -112,12 +109,12 @@ export default class App extends React.Component {
     });
 
     const way = getPath(
-      matrix,
+      normalizeMatrix,
       { x: user.x, y: user.y },
       { x: exits[0][0], y: exits[0][1] }
     );
     return {
-      matrix,
+      matrix: normalizeMatrix,
       user,
       way
     };
@@ -274,18 +271,20 @@ export default class App extends React.Component {
     const snapshotUserStep = this.snapshotUserSteps[step];
     return (
       <div>
-        <EnterMaze updateInitialMatrix={this.updateInitialMatrix} />
-        <Container>
-          <div>{matrix.length > 0 && this.renderMatrix(matrix)}</div>
-          {snapshotUserStep ? (
-            <Navigation
-              snapshotUserStep={snapshotUserStep}
-              handleClickAction={this.handleClickAction}
-            />
-          ) : (
-            <p style={{ marginLeft: "20px" }}>Congratulations</p>
-          )}
-        </Container>
+        <EnterMaze updateMatrix={this.updateMatrix} />
+        {matrix && (
+          <Container>
+            <div>{matrix.length > 0 && this.renderMatrix(matrix)}</div>
+            {snapshotUserStep ? (
+              <Navigation
+                snapshotUserStep={snapshotUserStep}
+                handleClickAction={this.handleClickAction}
+              />
+            ) : (
+              <p style={{ marginLeft: "20px" }}>Congratulations</p>
+            )}
+          </Container>
+        )}
       </div>
     );
   }
