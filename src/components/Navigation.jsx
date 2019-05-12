@@ -1,12 +1,20 @@
 import React from "react";
+import styled from "styled-components";
+import Button from "./Button";
+
+const NavigationContainer = styled.div``;
+
+const ButtonContainer = styled.div`
+  margin-bottom: 15px;
+`;
 
 export default class Navigation extends React.PureComponent {
   render() {
     const { snapshotUserStep, handleClickAction } = this.props;
     return (
-      <div style={{ marginLeft: "20px" }}>
-        <div style={{ marginBottom: "10px" }}>
-          <button
+      <NavigationContainer>
+        <ButtonContainer>
+          <Button
             type="button"
             disabled={snapshotUserStep.type !== "forward"}
             onClick={handleClickAction(snapshotUserStep.action)}
@@ -14,36 +22,36 @@ export default class Navigation extends React.PureComponent {
             Go {snapshotUserStep.numberRepeatingSteps || "n"}{" "}
             {`step${snapshotUserStep.numberRepeatingSteps > 1 ? "s" : ""}`}{" "}
             forward
-          </button>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <button
+          </Button>
+        </ButtonContainer>
+        <ButtonContainer>
+          <Button
             type="button"
             disabled={snapshotUserStep.type !== "around"}
             onClick={handleClickAction(snapshotUserStep.action)}
           >
             Turn around
-          </button>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <button
+          </Button>
+        </ButtonContainer>
+        <ButtonContainer>
+          <Button
             type="button"
             disabled={snapshotUserStep.type !== "left"}
             onClick={handleClickAction(snapshotUserStep.action)}
           >
             Turn left
-          </button>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <button
+          </Button>
+        </ButtonContainer>
+        <ButtonContainer>
+          <Button
             type="button"
             disabled={snapshotUserStep.type !== "right"}
             onClick={handleClickAction(snapshotUserStep.action)}
           >
             Turn right
-          </button>
-        </div>
-      </div>
+          </Button>
+        </ButtonContainer>
+      </NavigationContainer>
     );
   }
 }

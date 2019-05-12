@@ -6,8 +6,23 @@ import Cell from "./Cell";
 import EnterMaze from "./EnterMaze";
 import Navigation from "./Navigation";
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Container = styled.div`
   display: flex;
+`;
+
+const ContainerActions = styled.div`
+  margin-left: 30px;
+`;
+
+const Text = styled.h2`
+  font-size: 18px;
+  color: ${({ success }) => (success ? "#2FD781" : "rgb(219, 64, 53)")};
 `;
 
 const actionByCurrentUserDirection = {
@@ -53,7 +68,8 @@ export default class App extends React.Component {
 
   updateMatrix = value => {
     const { user, way, matrix } = this.getStateByMatrix(value);
-    this.snapshotUserSteps = this.getSnapshotUserSteps(user, way);
+    this.snapshotUserSteps =
+      way !== "noexits" ? this.getSnapshotUserSteps(user, way) : [];
     this.setState({
       user,
       way,
@@ -76,6 +92,8 @@ export default class App extends React.Component {
         return "bottom";
     }
   };
+
+  isNoExitsMaze = () => this.state.way === "noexits";
 
   getStateByMatrix = matrix => {
     const maxX = matrix[0].length - 1;
@@ -108,15 +126,10 @@ export default class App extends React.Component {
       });
     });
 
-    const way = getPath(
-      normalizeMatrix,
-      { x: user.x, y: user.y },
-      { x: exits[0][0], y: exits[0][1] }
-    );
     return {
       matrix: normalizeMatrix,
-      user,
-      way
+      way: getPath(normalizeMatrix, { x: user.x, y: user.y }, exits),
+      user
     };
   };
 
@@ -244,7 +257,10 @@ export default class App extends React.Component {
             <Cell
               key={`x-${positionX}`}
               isWall={Boolean(cellData)}
-              isWay={this.checkCellByWay(positionX, positionY)}
+              isWay={
+                !this.isNoExitsMaze() &&
+                this.checkCellByWay(positionX, positionY)
+              }
               userDirection={this.state.user.direction}
               isUser
             />
@@ -252,7 +268,10 @@ export default class App extends React.Component {
             <Cell
               key={`x-${positionX}`}
               isWall={Boolean(cellData)}
-              isWay={this.checkCellByWay(positionX, positionY)}
+              isWay={
+                !this.isNoExitsMaze() &&
+                this.checkCellByWay(positionX, positionY)
+              }
             />
           )
         )}
@@ -268,24 +287,29 @@ export default class App extends React.Component {
 
   render() {
     const { matrix, step } = this.state;
-    const snapshotUserStep = this.snapshotUserSteps[step];
     return (
-      <div>
+      <Wrapper>
         <EnterMaze updateMatrix={this.updateMatrix} />
         {matrix && (
           <Container>
             <div>{matrix.length > 0 && this.renderMatrix(matrix)}</div>
-            {snapshotUserStep ? (
-              <Navigation
-                snapshotUserStep={snapshotUserStep}
-                handleClickAction={this.handleClickAction}
-              />
-            ) : (
-              <p style={{ marginLeft: "20px" }}>Congratulations</p>
-            )}
+            <ContainerActions>
+              {!this.isNoExitsMaze() ? (
+                this.snapshotUserSteps[step] ? (
+                  <Navigation
+                    snapshotUserStep={this.snapshotUserSteps[step]}
+                    handleClickAction={this.handleClickAction}
+                  />
+                ) : (
+                  <Text success>Congratulations!</Text>
+                )
+              ) : (
+                <Text>No exits from maze</Text>
+              )}
+            </ContainerActions>
           </Container>
         )}
-      </div>
+      </Wrapper>
     );
   }
 }
