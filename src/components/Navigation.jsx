@@ -2,8 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import Button from "./Button";
 
-const NavigationContainer = styled.div``;
-
 const ButtonContainer = styled.div`
   margin-bottom: 15px;
 `;
@@ -12,7 +10,7 @@ export default class Navigation extends React.PureComponent {
   render() {
     const { snapshotUserStep, handleClickAction } = this.props;
     return (
-      <NavigationContainer>
+      <React.Fragment>
         <ButtonContainer>
           <Button
             type="button"
@@ -51,7 +49,7 @@ export default class Navigation extends React.PureComponent {
             Turn right
           </Button>
         </ButtonContainer>
-      </NavigationContainer>
+      </React.Fragment>
     );
   }
 }

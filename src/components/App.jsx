@@ -14,10 +14,22 @@ const Wrapper = styled.div`
 
 const Container = styled.div`
   display: flex;
+  width: 100%;
 `;
 
-const ContainerActions = styled.div`
+const ColumnMaze = styled.div`
+  flex: 1;
+`;
+
+const ColumnActions = styled.div`
+  flex: 1;
   margin-left: 30px;
+`;
+
+const ContainerMaze = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 `;
 
 const Text = styled.h2`
@@ -292,8 +304,12 @@ export default class App extends React.Component {
         <EnterMaze updateMatrix={this.updateMatrix} />
         {matrix && (
           <Container>
-            <div>{matrix.length > 0 && this.renderMatrix(matrix)}</div>
-            <ContainerActions>
+            <ColumnMaze>
+              <ContainerMaze>
+                {matrix.length > 0 && this.renderMatrix(matrix)}
+              </ContainerMaze>
+            </ColumnMaze>
+            <ColumnActions>
               {!this.isNoExitsMaze() ? (
                 this.snapshotUserSteps[step] ? (
                   <Navigation
@@ -306,7 +322,7 @@ export default class App extends React.Component {
               ) : (
                 <Text>No exits from maze</Text>
               )}
-            </ContainerActions>
+            </ColumnActions>
           </Container>
         )}
       </Wrapper>
