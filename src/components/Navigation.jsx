@@ -1,16 +1,33 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Button from "./Button";
 
 const ButtonContainer = styled.div`
   margin-bottom: 15px;
 `;
 
+const ButtonAction = styled(Button)`
+  transition: all 0.25s;
+  ${({ highlight }) =>
+    highlight &&
+    css`
+      && {
+        transform: scale(1.2);
+      }
+    `}
+`;
+
 export default class Navigation extends React.PureComponent {
   render() {
-    const { snapshotUserStep, handleClickAction } = this.props;
+    const {
+      handleClickAction,
+      canUserMovingByPosition,
+      nextStepType,
+      showHint
+    } = this.props;
     return (
       <React.Fragment>
+        {/* 
         <ButtonContainer>
           <Button
             type="button"
@@ -22,32 +39,43 @@ export default class Navigation extends React.PureComponent {
             forward
           </Button>
         </ButtonContainer>
+        */}
         <ButtonContainer>
-          <Button
+          <ButtonAction
             type="button"
-            disabled={snapshotUserStep.type !== "around"}
-            onClick={handleClickAction(snapshotUserStep.action)}
+            onClick={handleClickAction("forward")}
+            disabled={!canUserMovingByPosition}
+            highlight={nextStepType === "forward" && showHint}
+          >
+            Go 1 step forward
+          </ButtonAction>
+        </ButtonContainer>
+        <ButtonContainer>
+          <ButtonAction
+            type="button"
+            onClick={handleClickAction("around")}
+            highlight={nextStepType === "around" && showHint}
           >
             Turn around
-          </Button>
+          </ButtonAction>
         </ButtonContainer>
         <ButtonContainer>
-          <Button
+          <ButtonAction
             type="button"
-            disabled={snapshotUserStep.type !== "left"}
-            onClick={handleClickAction(snapshotUserStep.action)}
+            onClick={handleClickAction("left")}
+            highlight={nextStepType === "left" && showHint}
           >
             Turn left
-          </Button>
+          </ButtonAction>
         </ButtonContainer>
         <ButtonContainer>
-          <Button
+          <ButtonAction
             type="button"
-            disabled={snapshotUserStep.type !== "right"}
-            onClick={handleClickAction(snapshotUserStep.action)}
+            onClick={handleClickAction("right")}
+            highlight={nextStepType === "right" && showHint}
           >
             Turn right
-          </Button>
+          </ButtonAction>
         </ButtonContainer>
       </React.Fragment>
     );

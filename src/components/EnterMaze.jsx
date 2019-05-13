@@ -42,7 +42,15 @@ const ButtonCalculate = styled(Button)`
 
 export default class EnterMaze extends React.PureComponent {
   state = {
-    matrixValue: ""
+    matrixValue: `##########
+#        #
+#  ##### #
+#  #   # #
+#  #v# # #
+#  ### # #
+#      # #
+######## #
+`
   };
 
   onChange = event => {
@@ -70,7 +78,11 @@ export default class EnterMaze extends React.PureComponent {
   render() {
     return (
       <Container>
-        <Textarea name="matrixValue" onChange={this.onChange} />
+        <Textarea
+          name="matrixValue"
+          value={this.state.matrixValue}
+          onChange={this.onChange}
+        />
         <ButtonCalculate type="button" onClick={this.calculateMaze}>
           Calculate maze
         </ButtonCalculate>

@@ -37,6 +37,33 @@ const Text = styled.h2`
   color: ${({ success }) => (success ? "#2FD781" : "rgb(219, 64, 53)")};
 `;
 
+const userDirectionByAction = {
+  forward: {
+    top: "top",
+    bottom: "bottom",
+    left: "left",
+    right: "right"
+  },
+  around: {
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left"
+  },
+  left: {
+    top: "left",
+    bottom: "right",
+    left: "bottom",
+    right: "top"
+  },
+  right: {
+    top: "right",
+    bottom: "left",
+    left: "top",
+    right: "bottom"
+  }
+};
+
 const actionByCurrentUserDirection = {
   top: {
     top: "forward",
@@ -72,22 +99,31 @@ export default class App extends React.Component {
       user: null,
       way: null,
       matrix: null,
-      step: 0
+      exits: null,
+      step: 0,
+      showHint: false
     };
-
-    this.snapshotUserSteps = [];
   }
 
+  hideHint = () => {
+    this.hintTimer = setTimeout(() => {
+      this.setState({ showHint: false });
+    }, 1000);
+  };
+
   updateMatrix = value => {
-    const { user, way, matrix } = this.getStateByMatrix(value);
-    this.snapshotUserSteps =
-      way !== "noexits" ? this.getSnapshotUserSteps(user, way) : [];
-    this.setState({
-      user,
-      way,
-      matrix,
-      step: 0
-    });
+    const { user, way, matrix, exits } = this.getStateByMatrix(value);
+
+    this.setState(
+      {
+        user,
+        way,
+        matrix,
+        exits,
+        showHint: true
+      },
+      this.hideHint
+    );
   };
 
   getDirectionUserBySymbol = symbol => {
@@ -141,7 +177,8 @@ export default class App extends React.Component {
     return {
       matrix: normalizeMatrix,
       way: getPath(normalizeMatrix, { x: user.x, y: user.y }, exits),
-      user
+      user,
+      exits
     };
   };
 
@@ -290,15 +327,84 @@ export default class App extends React.Component {
       </Row>
     ));
 
-  handleClickAction = action => () => {
-    this.setState(state => ({
-      ...action,
-      step: state.step + 1
-    }));
+  getUserPositionByAction = (action, user) => {
+    if (action !== "forward") {
+      return {
+        x: user.x,
+        y: user.y
+      };
+    }
+
+    if (user.direction === "top") {
+      return {
+        x: user.x,
+        y: user.y - 1
+      };
+    }
+
+    if (user.direction === "bottom") {
+      return {
+        x: user.x,
+        y: user.y + 1
+      };
+    }
+
+    if (user.direction === "left") {
+      return {
+        x: user.x - 1,
+        y: user.y
+      };
+    }
+
+    if (user.direction === "right") {
+      return {
+        x: user.x + 1,
+        y: user.y
+      };
+    }
   };
 
+  handleClickAction = action => () => {
+    const user = { ...this.state.user };
+    const updateUser = {
+      ...user,
+      direction: userDirectionByAction[action][user.direction],
+      ...this.getUserPositionByAction(action, user)
+    };
+    const updateWay = getPath(
+      this.state.matrix,
+      { x: updateUser.x, y: updateUser.y },
+      this.state.exits
+    );
+
+    clearTimeout(this.hintTimer);
+
+    this.setState(
+      {
+        user: updateUser,
+        way: updateWay,
+        showHint: true
+      },
+      this.hideHint
+    );
+  };
+
+  canUserMovingByPosition = (user, matrix) => {
+    const config = {
+      top: !matrix[user.y - 1][user.x],
+      bottom: !matrix[user.y + 1][user.x],
+      right: !matrix[user.y][user.x + 1],
+      left: !matrix[user.y][user.x - 1]
+    };
+    return config[user.direction];
+  };
+
+  getNextStep = (user, way) =>
+    way && way !== "noexits" ? this.getSnapshotUserSteps(user, way)[0] : [];
+
   render() {
-    const { matrix, step } = this.state;
+    const { matrix, user, way, showHint } = this.state;
+    const nextStep = this.getNextStep(user, way);
     return (
       <Wrapper>
         <EnterMaze updateMatrix={this.updateMatrix} />
@@ -311,10 +417,15 @@ export default class App extends React.Component {
             </ColumnMaze>
             <ColumnActions>
               {!this.isNoExitsMaze() ? (
-                this.snapshotUserSteps[step] ? (
+                way.length > 1 ? (
                   <Navigation
-                    snapshotUserStep={this.snapshotUserSteps[step]}
                     handleClickAction={this.handleClickAction}
+                    canUserMovingByPosition={this.canUserMovingByPosition(
+                      user,
+                      matrix
+                    )}
+                    nextStepType={nextStep.type}
+                    showHint={showHint}
                   />
                 ) : (
                   <Text success>Congratulations!</Text>
