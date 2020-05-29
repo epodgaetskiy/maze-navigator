@@ -1,6 +1,5 @@
 import PF from "pathfinding";
-
-const PASS_VALUE = 0;
+import { PASS_VALUE } from "../constants/symbols";
 
 export class Finder {
   constructor(matrix) {

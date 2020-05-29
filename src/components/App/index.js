@@ -1,4 +1,11 @@
 import React from "react";
+import {
+  WALL_SYMBOL,
+  WALL_VALUE,
+  PASS_SYMBOL,
+  PASS_VALUE,
+  USER_SYMBOL,
+} from "../../constants/symbols";
 import { Finder } from "../../finder/finder";
 import {
   Wrapper,
@@ -11,19 +18,6 @@ import {
 import Navigation from "../Maze/Navigation";
 import { SetupMaze } from "../SetupMaze";
 import { Matrix } from "../Maze/Matrix";
-
-const WALL_SYMBOL = "#";
-const WALL_VALUE = 1;
-
-const PASS_SYMBOL = " ";
-const PASS_VALUE = 0;
-
-const USER_SYMBOL = {
-  TOP: "^",
-  BOTTOM: "v",
-  LEFT: "<",
-  RIGHT: ">",
-};
 
 const userDirectionByAction = {
   forward: {
@@ -365,14 +359,13 @@ export class App extends React.Component {
     return config[user.direction];
   };
 
-  getNextStep = (user, way) =>
-    way && way !== "noexits" ? this.getSnapshotUserSteps(user, way)[0] : [];
+  getNextStepType = (user, way) =>
+    this.getSnapshotUserSteps(user, way)[0]?.type;
 
   checkExitsMaze = (way) => way?.length > 0;
 
   render() {
     const { matrix, user, way, showHint, mazeStatus } = this.state;
-    const nextStep = this.getNextStep(user, way);
     const hasWayout = this.checkExitsMaze(way);
     return (
       <Wrapper>
@@ -393,7 +386,7 @@ export class App extends React.Component {
                       user,
                       matrix
                     )}
-                    nextStepType={nextStep.type}
+                    nextStepType={this.getNextStepType(user, way)}
                     showHint={showHint}
                   />
                 ) : (
