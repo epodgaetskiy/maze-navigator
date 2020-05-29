@@ -9,7 +9,7 @@ import {
   Text,
 } from "./styled";
 import Navigation from "../Maze/Navigation";
-import { EnterMaze } from "../EnterMaze";
+import { SetupMaze } from "../SetupMaze";
 import { Matrix } from "../Maze/Matrix";
 
 const userDirectionByAction = {
@@ -344,7 +344,7 @@ export class App extends React.Component {
     const nextStep = this.getNextStep(user, way);
     return (
       <Wrapper>
-        <EnterMaze updateMatrix={this.updateMatrix} />
+        <SetupMaze updateMatrix={this.updateMatrix} />
         {matrix && (
           <Container>
             <ColumnMaze>
