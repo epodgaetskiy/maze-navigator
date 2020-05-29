@@ -18,12 +18,45 @@ const ButtonAction = styled(Button)`
 `;
 
 export default class Navigation extends React.PureComponent {
+  state = {
+    showHint: false,
+  };
+
+  componentDidMount() {
+    setTimeout(this.onShowHint, 1000);
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (!prevState.showHint) {
+      this.onShowHint();
+    }
+  }
+
+  onShowHint = () => {
+    clearTimeout(this.hintTimer);
+    this.setState(
+      {
+        showHint: true,
+      },
+      this.hideHint
+    );
+  };
+
+  hideHint = () => {
+    this.hintTimer = setTimeout(() => {
+      this.setState({
+        showHint: false,
+      });
+    }, 1000);
+  };
+
   handleClickAction = (action) => () => {
     this.props.updateAction(action);
   };
 
   render() {
-    const { canUserMovingByPosition, nextStepType, showHint } = this.props;
+    const { showHint } = this.state;
+    const { canUserMovingByPosition, nextStep } = this.props;
     return (
       <>
         <ButtonContainer>
@@ -31,7 +64,7 @@ export default class Navigation extends React.PureComponent {
             type="button"
             onClick={this.handleClickAction("forward")}
             disabled={!canUserMovingByPosition}
-            highlight={nextStepType === "forward" && showHint}
+            highlight={nextStep.type === "forward" && showHint}
           >
             Go 1 step forward
           </ButtonAction>
@@ -40,7 +73,7 @@ export default class Navigation extends React.PureComponent {
           <ButtonAction
             type="button"
             onClick={this.handleClickAction("around")}
-            highlight={nextStepType === "around" && showHint}
+            highlight={nextStep.type === "around" && showHint}
           >
             Turn around
           </ButtonAction>
@@ -49,7 +82,7 @@ export default class Navigation extends React.PureComponent {
           <ButtonAction
             type="button"
             onClick={this.handleClickAction("left")}
-            highlight={nextStepType === "left" && showHint}
+            highlight={nextStep.type === "left" && showHint}
           >
             Turn left
           </ButtonAction>
@@ -58,7 +91,7 @@ export default class Navigation extends React.PureComponent {
           <ButtonAction
             type="button"
             onClick={this.handleClickAction("right")}
-            highlight={nextStepType === "right" && showHint}
+            highlight={nextStep.type === "right" && showHint}
           >
             Turn right
           </ButtonAction>

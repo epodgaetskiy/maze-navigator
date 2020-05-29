@@ -89,17 +89,8 @@ export class App extends React.Component {
       matrix: null,
       exits: null,
       step: 0,
-      showHint: false,
     };
-
-    this.finder = null;
   }
-
-  hideHint = () => {
-    this.hintTimer = setTimeout(() => {
-      this.setState({ showHint: false });
-    }, 1000);
-  };
 
   updateMatrix = (value) => {
     const { user, way, matrix, exits } = this.getStateByMatrix(value);
@@ -110,7 +101,6 @@ export class App extends React.Component {
         way,
         matrix,
         exits,
-        showHint: true,
         mazeStatus: MAZE_STATUS.WALK,
       },
       this.hideHint
@@ -337,16 +327,10 @@ export class App extends React.Component {
       y: updateUser.y,
     });
 
-    clearTimeout(this.hintTimer);
-
-    this.setState(
-      {
-        user: updateUser,
-        way: updateShortestWay,
-        showHint: true,
-      },
-      this.hideHint
-    );
+    this.setState({
+      user: updateUser,
+      way: updateShortestWay,
+    });
   };
 
   canUserMovingByPosition = (user, matrix) => {
@@ -359,13 +343,12 @@ export class App extends React.Component {
     return config[user.direction];
   };
 
-  getNextStepType = (user, way) =>
-    this.getSnapshotUserSteps(user, way)[0]?.type;
+  getNextStep = (user, way) => this.getSnapshotUserSteps(user, way)[0];
 
   checkExitsMaze = (way) => way?.length > 0;
 
   render() {
-    const { matrix, user, way, showHint, mazeStatus } = this.state;
+    const { matrix, user, way, mazeStatus } = this.state;
     const hasWayout = this.checkExitsMaze(way);
     return (
       <Wrapper>
@@ -386,8 +369,7 @@ export class App extends React.Component {
                       user,
                       matrix
                     )}
-                    nextStepType={this.getNextStepType(user, way)}
-                    showHint={showHint}
+                    nextStep={this.getNextStep(user, way)}
                   />
                 ) : (
                   <Text status="success">Congratulations!</Text>
