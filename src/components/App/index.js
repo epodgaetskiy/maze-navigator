@@ -325,7 +325,7 @@ export class App extends React.Component {
     }
   };
 
-  handleClickAction = (action) => () => {
+  updateAction = (action) => {
     const user = { ...this.state.user };
     const updateUser = {
       ...user,
@@ -381,7 +381,7 @@ export class App extends React.Component {
               {hasWayout ? (
                 way.length > 1 ? (
                   <Navigation
-                    handleClickAction={this.handleClickAction}
+                    updateAction={this.updateAction}
                     canUserMovingByPosition={this.canUserMovingByPosition(
                       user,
                       matrix
@@ -390,7 +390,7 @@ export class App extends React.Component {
                     showHint={showHint}
                   />
                 ) : (
-                  <Text success>Congratulations!</Text>
+                  <Text status="success">Congratulations!</Text>
                 )
               ) : (
                 <Text>No exits from maze</Text>

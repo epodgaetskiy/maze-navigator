@@ -28,5 +28,6 @@ export const ContainerMaze = styled.div`
 
 export const Text = styled.h2`
   font-size: 18px;
-  color: ${({ success }) => (success ? "#2FD781" : "rgb(219, 64, 53)")};
+  color: ${({ status }) =>
+    status === "success" ? "#2FD781" : "rgb(219, 64, 53)"};
 `;

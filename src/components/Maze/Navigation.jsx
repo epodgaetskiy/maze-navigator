@@ -18,19 +18,18 @@ const ButtonAction = styled(Button)`
 `;
 
 export default class Navigation extends React.PureComponent {
+  handleClickAction = (action) => () => {
+    this.props.updateAction(action);
+  };
+
   render() {
-    const {
-      handleClickAction,
-      canUserMovingByPosition,
-      nextStepType,
-      showHint,
-    } = this.props;
+    const { canUserMovingByPosition, nextStepType, showHint } = this.props;
     return (
       <>
         <ButtonContainer>
           <ButtonAction
             type="button"
-            onClick={handleClickAction("forward")}
+            onClick={this.handleClickAction("forward")}
             disabled={!canUserMovingByPosition}
             highlight={nextStepType === "forward" && showHint}
           >
@@ -40,7 +39,7 @@ export default class Navigation extends React.PureComponent {
         <ButtonContainer>
           <ButtonAction
             type="button"
-            onClick={handleClickAction("around")}
+            onClick={this.handleClickAction("around")}
             highlight={nextStepType === "around" && showHint}
           >
             Turn around
@@ -49,7 +48,7 @@ export default class Navigation extends React.PureComponent {
         <ButtonContainer>
           <ButtonAction
             type="button"
-            onClick={handleClickAction("left")}
+            onClick={this.handleClickAction("left")}
             highlight={nextStepType === "left" && showHint}
           >
             Turn left
@@ -58,7 +57,7 @@ export default class Navigation extends React.PureComponent {
         <ButtonContainer>
           <ButtonAction
             type="button"
-            onClick={handleClickAction("right")}
+            onClick={this.handleClickAction("right")}
             highlight={nextStepType === "right" && showHint}
           >
             Turn right
