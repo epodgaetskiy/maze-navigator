@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import Button from "./Button";
+import { Button } from "./ui/Button";
 
 const ButtonContainer = styled.div`
   margin-bottom: 15px;
@@ -26,20 +26,7 @@ export default class Navigation extends React.PureComponent {
       showHint,
     } = this.props;
     return (
-      <React.Fragment>
-        {/* 
-        <ButtonContainer>
-          <Button
-            type="button"
-            disabled={snapshotUserStep.type !== "forward"}
-            onClick={handleClickAction(snapshotUserStep.action)}
-          >
-            Go {snapshotUserStep.numberRepeatingSteps || "n"}{" "}
-            {`step${snapshotUserStep.numberRepeatingSteps > 1 ? "s" : ""}`}{" "}
-            forward
-          </Button>
-        </ButtonContainer>
-        */}
+      <>
         <ButtonContainer>
           <ButtonAction
             type="button"
@@ -77,7 +64,7 @@ export default class Navigation extends React.PureComponent {
             Turn right
           </ButtonAction>
         </ButtonContainer>
-      </React.Fragment>
+      </>
     );
   }
 }

@@ -1,41 +1,17 @@
 import React from "react";
-import styled from "styled-components";
-import { getPath } from "../finder/finder";
-import Row from "./Row";
-import Cell from "./Cell";
-import EnterMaze from "./EnterMaze";
-import Navigation from "./Navigation";
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Container = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
-const ColumnMaze = styled.div`
-  flex: 1;
-`;
-
-const ColumnActions = styled.div`
-  flex: 1;
-  margin-left: 30px;
-`;
-
-const ContainerMaze = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-`;
-
-const Text = styled.h2`
-  font-size: 18px;
-  color: ${({ success }) => (success ? "#2FD781" : "rgb(219, 64, 53)")};
-`;
+import { getPath } from "../../finder/finder";
+import {
+  Wrapper,
+  Container,
+  ColumnMaze,
+  ColumnActions,
+  ContainerMaze,
+  Text,
+} from "./styled";
+import Row from "../Row";
+import Cell from "../Cell";
+import { EnterMaze } from "../EnterMaze";
+import Navigation from "../Navigation";
 
 const userDirectionByAction = {
   forward: {
@@ -91,7 +67,7 @@ const actionByCurrentUserDirection = {
   },
 };
 
-export default class App extends React.Component {
+export class App extends React.Component {
   constructor() {
     super();
 
