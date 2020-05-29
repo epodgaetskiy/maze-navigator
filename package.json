@@ -6,7 +6,10 @@
   "main": "src/index.js",
   "dependencies": {
     "gh-pages": "^2.2.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.7",
     "pathfinding": "^0.4.18",
+    "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
@@ -27,5 +30,15 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
   "homepage": "https://epodgaetskiy.github.io/maze-navigator"
 }
