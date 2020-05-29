@@ -1,7 +1,8 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import IconNav from "../images/icon-nav.png";
 
-const getDegByDirection = direction => {
+const getDegByDirection = (direction) => {
   switch (direction) {
     case "top":
       return "0deg";
@@ -39,7 +40,7 @@ const Container = styled.div`
     font-weight: bold;
     display: ${({ isUser }) => (isUser ? "flex" : "none")};
     align-items: center;
-    background-image: url("images/icon-nav.png");
+    background-image: url(${IconNav});
     background-size: 100% 100%;
   }
 `;
