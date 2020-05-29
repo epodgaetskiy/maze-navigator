@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import { PropTypes } from "prop-types";
 import IconNav from "../../../images/icon-nav.png";
 
 const getDegByDirection = (direction) => {
@@ -17,10 +18,14 @@ const getDegByDirection = (direction) => {
   }
 };
 
-const Container = styled.div`
+const CellStyled = styled.div`
   position: relative;
-  background: ${({ isWay, isWall }) =>
-    isWay ? "yellow" : isWall ? "#2FD781" : "#E5E7EA"};
+  background: ${({ isWay, isWall }) => {
+    if (isWay) {
+      return "yellow";
+    }
+    return isWall ? "#2FD781" : "#E5E7EA";
+  }};
   width: 20px;
   height: 20px;
   border: 1px solid white;
@@ -46,14 +51,13 @@ const Container = styled.div`
 `;
 
 export class Cell extends React.PureComponent {
+  static propTypes = {
+    isWay: PropTypes.bool.isRequired,
+    isWall: PropTypes.bool.isRequired,
+    isUser: PropTypes.bool,
+    userDirection: PropTypes.oneOf(["top", "bottom", "left", "right"]),
+  };
   render() {
-    return (
-      <Container
-        userDirection={this.props.userDirection}
-        isWall={this.props.isWall}
-        isUser={this.props.isUser}
-        isWay={this.props.isWay}
-      />
-    );
+    return <CellStyled {...this.props} />;
   }
 }
