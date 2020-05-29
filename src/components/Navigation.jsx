@@ -23,7 +23,7 @@ export default class Navigation extends React.PureComponent {
       handleClickAction,
       canUserMovingByPosition,
       nextStepType,
-      showHint
+      showHint,
     } = this.props;
     return (
       <React.Fragment>

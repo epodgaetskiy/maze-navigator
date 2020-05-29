@@ -42,26 +42,26 @@ const userDirectionByAction = {
     top: "top",
     bottom: "bottom",
     left: "left",
-    right: "right"
+    right: "right",
   },
   around: {
     top: "bottom",
     bottom: "top",
     left: "right",
-    right: "left"
+    right: "left",
   },
   left: {
     top: "left",
     bottom: "right",
     left: "bottom",
-    right: "top"
+    right: "top",
   },
   right: {
     top: "right",
     bottom: "left",
     left: "top",
-    right: "bottom"
-  }
+    right: "bottom",
+  },
 };
 
 const actionByCurrentUserDirection = {
@@ -69,26 +69,26 @@ const actionByCurrentUserDirection = {
     top: "forward",
     bottom: "around",
     left: "right",
-    right: "left"
+    right: "left",
   },
   bottom: {
     top: "around",
     bottom: "forward",
     left: "left",
-    right: "right"
+    right: "right",
   },
   left: {
     top: "left",
     bottom: "right",
     left: "forward",
-    right: "around"
+    right: "around",
   },
   right: {
     top: "right",
     bottom: "left",
     left: "around",
-    right: "forward"
-  }
+    right: "forward",
+  },
 };
 
 export default class App extends React.Component {
@@ -101,7 +101,7 @@ export default class App extends React.Component {
       matrix: null,
       exits: null,
       step: 0,
-      showHint: false
+      showHint: false,
     };
   }
 
@@ -111,7 +111,7 @@ export default class App extends React.Component {
     }, 1000);
   };
 
-  updateMatrix = value => {
+  updateMatrix = (value) => {
     const { user, way, matrix, exits } = this.getStateByMatrix(value);
 
     this.setState(
@@ -120,13 +120,13 @@ export default class App extends React.Component {
         way,
         matrix,
         exits,
-        showHint: true
+        showHint: true,
       },
       this.hideHint
     );
   };
 
-  getDirectionUserBySymbol = symbol => {
+  getDirectionUserBySymbol = (symbol) => {
     switch (symbol) {
       case ">":
         return "right";
@@ -143,7 +143,7 @@ export default class App extends React.Component {
 
   isNoExitsMaze = () => this.state.way === "noexits";
 
-  getStateByMatrix = matrix => {
+  getStateByMatrix = (matrix) => {
     const maxX = matrix[0].length - 1;
     const maxY = matrix.length - 1;
     const normalizeMatrix = [];
@@ -156,7 +156,9 @@ export default class App extends React.Component {
         }
         if (
           item === " " &&
-          (oY !== 0 && oY !== maxY && (oX === 0 || oX === maxX))
+          oY !== 0 &&
+          oY !== maxY &&
+          (oX === 0 || oX === maxX)
         ) {
           exits.push([oX, oY]);
         }
@@ -178,7 +180,7 @@ export default class App extends React.Component {
       matrix: normalizeMatrix,
       way: getPath(normalizeMatrix, { x: user.x, y: user.y }, exits),
       user,
-      exits
+      exits,
     };
   };
 
@@ -217,18 +219,18 @@ export default class App extends React.Component {
           ? {
               user: {
                 ...user,
-                direction: needMoving
+                direction: needMoving,
               },
-              currentStep
+              currentStep,
             }
           : {
               user: {
                 ...user,
                 x: way[currentStep + 1][0],
-                y: way[currentStep + 1][1]
+                y: way[currentStep + 1][1],
               },
-              currentStep: currentStep + 1
-            }
+              currentStep: currentStep + 1,
+            },
     };
   };
 
@@ -249,7 +251,7 @@ export default class App extends React.Component {
     } else {
       return {
         ...items[currentIndex],
-        numberRepeatingSteps
+        numberRepeatingSteps,
       };
     }
   };
@@ -298,7 +300,7 @@ export default class App extends React.Component {
       return acc;
     }, false);
 
-  renderMatrix = matrix =>
+  renderMatrix = (matrix) =>
     matrix.map((rowData, positionY) => (
       <Row key={`y-${positionY}`}>
         {rowData.map((cellData, positionX) =>
@@ -331,45 +333,45 @@ export default class App extends React.Component {
     if (action !== "forward") {
       return {
         x: user.x,
-        y: user.y
+        y: user.y,
       };
     }
 
     if (user.direction === "top") {
       return {
         x: user.x,
-        y: user.y - 1
+        y: user.y - 1,
       };
     }
 
     if (user.direction === "bottom") {
       return {
         x: user.x,
-        y: user.y + 1
+        y: user.y + 1,
       };
     }
 
     if (user.direction === "left") {
       return {
         x: user.x - 1,
-        y: user.y
+        y: user.y,
       };
     }
 
     if (user.direction === "right") {
       return {
         x: user.x + 1,
-        y: user.y
+        y: user.y,
       };
     }
   };
 
-  handleClickAction = action => () => {
+  handleClickAction = (action) => () => {
     const user = { ...this.state.user };
     const updateUser = {
       ...user,
       direction: userDirectionByAction[action][user.direction],
-      ...this.getUserPositionByAction(action, user)
+      ...this.getUserPositionByAction(action, user),
     };
     const updateWay = getPath(
       this.state.matrix,
@@ -383,7 +385,7 @@ export default class App extends React.Component {
       {
         user: updateUser,
         way: updateWay,
-        showHint: true
+        showHint: true,
       },
       this.hideHint
     );
@@ -394,7 +396,7 @@ export default class App extends React.Component {
       top: !matrix[user.y - 1][user.x],
       bottom: !matrix[user.y + 1][user.x],
       right: !matrix[user.y][user.x + 1],
-      left: !matrix[user.y][user.x - 1]
+      left: !matrix[user.y][user.x - 1],
     };
     return config[user.direction];
   };
