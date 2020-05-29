@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { Button } from "./ui/Button";
+import { Button } from "../ui/Button";
 
 const ButtonContainer = styled.div`
   margin-bottom: 15px;

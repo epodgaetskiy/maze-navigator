@@ -8,10 +8,9 @@ import {
   ContainerMaze,
   Text,
 } from "./styled";
-import Row from "../Row";
-import Cell from "../Cell";
+import Navigation from "../Maze/Navigation";
 import { EnterMaze } from "../EnterMaze";
-import Navigation from "../Navigation";
+import { Matrix } from "../Maze/Matrix";
 
 const userDirectionByAction = {
   forward: {
@@ -265,46 +264,6 @@ export class App extends React.Component {
     return optimezeSnapshotUserSteps;
   };
 
-  checkCellByUser = (positionX, positionY) =>
-    positionX === this.state.user.x && positionY === this.state.user.y;
-
-  checkCellByWay = (positionX, positionY) =>
-    this.state.way.reduce((acc, path) => {
-      if (path[0] === positionX && path[1] === positionY) {
-        acc = true;
-      }
-      return acc;
-    }, false);
-
-  renderMatrix = (matrix) =>
-    matrix.map((rowData, positionY) => (
-      <Row key={`y-${positionY}`}>
-        {rowData.map((cellData, positionX) =>
-          this.checkCellByUser(positionX, positionY) ? (
-            <Cell
-              key={`x-${positionX}`}
-              isWall={Boolean(cellData)}
-              isWay={
-                !this.isNoExitsMaze() &&
-                this.checkCellByWay(positionX, positionY)
-              }
-              userDirection={this.state.user.direction}
-              isUser
-            />
-          ) : (
-            <Cell
-              key={`x-${positionX}`}
-              isWall={Boolean(cellData)}
-              isWay={
-                !this.isNoExitsMaze() &&
-                this.checkCellByWay(positionX, positionY)
-              }
-            />
-          )
-        )}
-      </Row>
-    ));
-
   getUserPositionByAction = (action, user) => {
     if (action !== "forward") {
       return {
@@ -390,7 +349,12 @@ export class App extends React.Component {
           <Container>
             <ColumnMaze>
               <ContainerMaze>
-                {matrix.length > 0 && this.renderMatrix(matrix)}
+                <Matrix
+                  matrix={matrix}
+                  way={way}
+                  user={user}
+                  isNoExitsMaze={this.isNoExitsMaze()}
+                />
               </ContainerMaze>
             </ColumnMaze>
             <ColumnActions>

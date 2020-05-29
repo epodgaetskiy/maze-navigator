@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import IconNav from "../images/icon-nav.png";
+import IconNav from "../../../images/icon-nav.png";
 
 const getDegByDirection = (direction) => {
   switch (direction) {
@@ -45,7 +45,7 @@ const Container = styled.div`
   }
 `;
 
-export default class Cell extends React.PureComponent {
+export class Cell extends React.PureComponent {
   render() {
     return (
       <Container
