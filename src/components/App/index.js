@@ -18,6 +18,13 @@ const WALL_VALUE = 1;
 const PASS_SYMBOL = " ";
 const PASS_VALUE = 0;
 
+const USER_SYMBOL = {
+  TOP: "^",
+  BOTTOM: "v",
+  LEFT: "<",
+  RIGHT: ">",
+};
+
 const userDirectionByAction = {
   forward: {
     top: "top",
@@ -118,23 +125,42 @@ export class App extends React.Component {
 
   getDirectionUserBySymbol = (symbol) => {
     switch (symbol) {
-      case ">":
+      case USER_SYMBOL.RIGHT:
         return "right";
-      case "<":
+      case USER_SYMBOL.LEFT:
         return "left";
-      case "^":
+      case USER_SYMBOL.TOP:
         return "top";
-      case "v":
+      case USER_SYMBOL.BOTTOM:
         return "bottom";
       default:
         return "bottom";
     }
   };
 
-  getStateByMatrix = (matrix) => {
-    const normalizeMatrix = [];
+  getUserFromMatrix = (matrix) => {
     const user = {};
+    const isUserSymbol = (symbol) =>
+      symbol === USER_SYMBOL.TOP ||
+      symbol === USER_SYMBOL.BOTTOM ||
+      symbol === USER_SYMBOL.LEFT ||
+      symbol === USER_SYMBOL.RIGHT;
 
+    matrix.forEach((row, oY) => {
+      row.forEach((symbol, oX) => {
+        if (isUserSymbol(symbol)) {
+          user.x = oX;
+          user.y = oY;
+          user.direction = this.getDirectionUserBySymbol(symbol);
+        }
+      });
+    });
+
+    return user;
+  };
+
+  getNormalizeMatrix = (matrix) => {
+    const normalizeMatrix = [];
     matrix.forEach((row, oY) => {
       normalizeMatrix[oY] = row.map((item, oX) => {
         switch (item) {
@@ -143,19 +169,21 @@ export class App extends React.Component {
           case PASS_SYMBOL:
             return PASS_VALUE;
           default:
-            user.x = oX;
-            user.y = oY;
-            user.direction = this.getDirectionUserBySymbol(item);
             return PASS_VALUE;
         }
       });
     });
+    return normalizeMatrix;
+  };
 
+  getStateByMatrix = (matrix) => {
+    const user = this.getUserFromMatrix(matrix);
+    const normalizeMatrix = this.getNormalizeMatrix(matrix);
     this.finder = new Finder(normalizeMatrix);
 
     return {
       matrix: normalizeMatrix,
-      way: this.finder.getShortestWay({ x: user.x, y: user.y }),
+      way: this.finder.getShortestWay(user),
       user,
       exits: this.finder.getExists(),
     };

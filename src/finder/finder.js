@@ -5,7 +5,7 @@ const PASS_VALUE = 0;
 export class Finder {
   constructor(matrix) {
     this.grid = new PF.Grid(matrix);
-    this.finder = new PF.AStarFinder();
+    this.AStarFinder = new PF.AStarFinder();
     this.exits = this.calculateExits(matrix);
   }
 
@@ -34,12 +34,12 @@ export class Finder {
     return this.exits;
   }
 
-  getShortestWay(user) {
+  getShortestWay(point) {
     try {
       const pathes = this.exits.map((exit) =>
-        this.finder.findPath(
-          user.x,
-          user.y,
+        this.AStarFinder.findPath(
+          point.x,
+          point.y,
           exit[0],
           exit[1],
           this.grid.clone()
