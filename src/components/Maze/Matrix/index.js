@@ -1,15 +1,22 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Row } from "./styled";
 import { Cell } from "./Cell";
 
 export class Matrix extends React.PureComponent {
+  static propTypes = {
+    way: PropTypes.array,
+    matrix: PropTypes.array,
+    user: PropTypes.object,
+  };
+
   isWayPosition = (way, { x, y }) =>
     way.some((path) => path[0] === x && path[1] === y);
 
   isUserPosition = (user, { x, y }) => x === user.x && y === user.y;
 
   render() {
-    const { matrix, way, isNoExitsMaze, user } = this.props;
+    const { matrix, way, user } = this.props;
 
     if (matrix.length === 0) {
       return null;
@@ -22,10 +29,7 @@ export class Matrix extends React.PureComponent {
             <Cell
               key={`x-${positionX}`}
               isWall={Boolean(cellData)}
-              isWay={
-                !isNoExitsMaze &&
-                this.isWayPosition(way, { x: positionX, y: positionY })
-              }
+              isWay={this.isWayPosition(way, { x: positionX, y: positionY })}
               userDirection={user.direction}
               isUser={this.isUserPosition(user, { x: positionX, y: positionY })}
             />
@@ -33,10 +37,7 @@ export class Matrix extends React.PureComponent {
             <Cell
               key={`x-${positionX}`}
               isWall={Boolean(cellData)}
-              isWay={
-                !isNoExitsMaze &&
-                this.isWayPosition(way, { x: positionX, y: positionY })
-              }
+              isWay={this.isWayPosition(way, { x: positionX, y: positionY })}
             />
           )
         )}

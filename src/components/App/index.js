@@ -1,5 +1,5 @@
 import React from "react";
-import { getPath } from "../../finder/finder";
+import { getShortestWay } from "../../finder/finder";
 import {
   Wrapper,
   Container,
@@ -11,6 +11,12 @@ import {
 import Navigation from "../Maze/Navigation";
 import { SetupMaze } from "../SetupMaze";
 import { Matrix } from "../Maze/Matrix";
+
+const WALL_SYMBOL = "#";
+const WALL_VALUE = 1;
+
+const PASS_SYMBOL = " ";
+const PASS_VALUE = 0;
 
 const userDirectionByAction = {
   forward: {
@@ -66,19 +72,21 @@ const actionByCurrentUserDirection = {
   },
 };
 
-export class App extends React.Component {
-  constructor() {
-    super();
+const MAZE_STATUS = {
+  SETUP: "setup",
+  WALK: "walk",
+};
 
-    this.state = {
-      user: null,
-      way: null,
-      matrix: null,
-      exits: null,
-      step: 0,
-      showHint: false,
-    };
-  }
+export class App extends React.Component {
+  state = {
+    mazeStatus: MAZE_STATUS.SETUP,
+    user: null,
+    way: null,
+    matrix: null,
+    exits: null,
+    step: 0,
+    showHint: false,
+  };
 
   hideHint = () => {
     this.hintTimer = setTimeout(() => {
@@ -96,6 +104,7 @@ export class App extends React.Component {
         matrix,
         exits,
         showHint: true,
+        mazeStatus: MAZE_STATUS.WALK,
       },
       this.hideHint
     );
@@ -116,8 +125,6 @@ export class App extends React.Component {
     }
   };
 
-  isNoExitsMaze = () => this.state.way === "noexits";
-
   getStateByMatrix = (matrix) => {
     const maxX = matrix[0].length - 1;
     const maxY = matrix.length - 1;
@@ -126,11 +133,11 @@ export class App extends React.Component {
     const exits = [];
     matrix.forEach((row, oY) => {
       normalizeMatrix[oY] = row.map((item, oX) => {
-        if (item === " " && (oY === 0 || oY === maxY)) {
+        if (item === PASS_SYMBOL && (oY === 0 || oY === maxY)) {
           exits.push([oX, oY]);
         }
         if (
-          item === " " &&
+          item === PASS_SYMBOL &&
           oY !== 0 &&
           oY !== maxY &&
           (oX === 0 || oX === maxX)
@@ -138,22 +145,22 @@ export class App extends React.Component {
           exits.push([oX, oY]);
         }
         switch (item) {
-          case "#":
-            return 1;
-          case " ":
-            return 0;
+          case WALL_SYMBOL:
+            return WALL_VALUE;
+          case PASS_SYMBOL:
+            return PASS_VALUE;
           default:
             user.x = oX;
             user.y = oY;
             user.direction = this.getDirectionUserBySymbol(item);
-            return 0;
+            return PASS_VALUE;
         }
       });
     });
 
     return {
       matrix: normalizeMatrix,
-      way: getPath(normalizeMatrix, { x: user.x, y: user.y }, exits),
+      way: getShortestWay(normalizeMatrix, { x: user.x, y: user.y }, exits),
       user,
       exits,
     };
@@ -308,7 +315,7 @@ export class App extends React.Component {
       direction: userDirectionByAction[action][user.direction],
       ...this.getUserPositionByAction(action, user),
     };
-    const updateWay = getPath(
+    const updateWay = getShortestWay(
       this.state.matrix,
       { x: updateUser.x, y: updateUser.y },
       this.state.exits
@@ -339,26 +346,24 @@ export class App extends React.Component {
   getNextStep = (user, way) =>
     way && way !== "noexits" ? this.getSnapshotUserSteps(user, way)[0] : [];
 
+  checkExitsMaze = (way) => way?.length > 0;
+
   render() {
-    const { matrix, user, way, showHint } = this.state;
+    const { matrix, user, way, showHint, mazeStatus } = this.state;
     const nextStep = this.getNextStep(user, way);
+    const hasWayout = this.checkExitsMaze(way);
     return (
       <Wrapper>
         <SetupMaze updateMatrix={this.updateMatrix} />
-        {matrix && (
+        {mazeStatus === MAZE_STATUS.WALK && (
           <Container>
             <ColumnMaze>
               <ContainerMaze>
-                <Matrix
-                  matrix={matrix}
-                  way={way}
-                  user={user}
-                  isNoExitsMaze={this.isNoExitsMaze()}
-                />
+                <Matrix matrix={matrix} way={way} user={user} />
               </ContainerMaze>
             </ColumnMaze>
             <ColumnActions>
-              {!this.isNoExitsMaze() ? (
+              {hasWayout ? (
                 way.length > 1 ? (
                   <Navigation
                     handleClickAction={this.handleClickAction}
