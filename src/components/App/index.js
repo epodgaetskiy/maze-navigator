@@ -1,5 +1,5 @@
 import React from "react";
-import { getShortestWay } from "../../finder/finder";
+import { Finder } from "../../finder/finder";
 import {
   Wrapper,
   Container,
@@ -78,15 +78,21 @@ const MAZE_STATUS = {
 };
 
 export class App extends React.Component {
-  state = {
-    mazeStatus: MAZE_STATUS.SETUP,
-    user: null,
-    way: null,
-    matrix: null,
-    exits: null,
-    step: 0,
-    showHint: false,
-  };
+  constructor() {
+    super();
+
+    this.state = {
+      mazeStatus: MAZE_STATUS.SETUP,
+      user: null,
+      way: null,
+      matrix: null,
+      exits: null,
+      step: 0,
+      showHint: false,
+    };
+
+    this.finder = null;
+  }
 
   hideHint = () => {
     this.hintTimer = setTimeout(() => {
@@ -126,24 +132,11 @@ export class App extends React.Component {
   };
 
   getStateByMatrix = (matrix) => {
-    const maxX = matrix[0].length - 1;
-    const maxY = matrix.length - 1;
     const normalizeMatrix = [];
     const user = {};
-    const exits = [];
+
     matrix.forEach((row, oY) => {
       normalizeMatrix[oY] = row.map((item, oX) => {
-        if (item === PASS_SYMBOL && (oY === 0 || oY === maxY)) {
-          exits.push([oX, oY]);
-        }
-        if (
-          item === PASS_SYMBOL &&
-          oY !== 0 &&
-          oY !== maxY &&
-          (oX === 0 || oX === maxX)
-        ) {
-          exits.push([oX, oY]);
-        }
         switch (item) {
           case WALL_SYMBOL:
             return WALL_VALUE;
@@ -158,11 +151,13 @@ export class App extends React.Component {
       });
     });
 
+    this.finder = new Finder(normalizeMatrix);
+
     return {
       matrix: normalizeMatrix,
-      way: getShortestWay(normalizeMatrix, { x: user.x, y: user.y }, exits),
+      way: this.finder.getShortestWay({ x: user.x, y: user.y }),
       user,
-      exits,
+      exits: this.finder.getExists(),
     };
   };
 
@@ -315,18 +310,17 @@ export class App extends React.Component {
       direction: userDirectionByAction[action][user.direction],
       ...this.getUserPositionByAction(action, user),
     };
-    const updateWay = getShortestWay(
-      this.state.matrix,
-      { x: updateUser.x, y: updateUser.y },
-      this.state.exits
-    );
+    const updateShortestWay = this.finder.getShortestWay({
+      x: updateUser.x,
+      y: updateUser.y,
+    });
 
     clearTimeout(this.hintTimer);
 
     this.setState(
       {
         user: updateUser,
-        way: updateWay,
+        way: updateShortestWay,
         showHint: true,
       },
       this.hideHint
