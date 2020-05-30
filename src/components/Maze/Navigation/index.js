@@ -1,5 +1,6 @@
 import React from "react";
 import { actionByCurrentUserDirection } from "../../../helpers/configActions";
+import { KEY_CODES } from "../../../constants/keyCodes";
 import {
   Container,
   ContainerTop,
@@ -13,6 +14,7 @@ export class Navigation extends React.PureComponent {
   };
 
   componentDidMount() {
+    window.addEventListener("keydown", this.moveOnKeydown);
     setTimeout(this.onShowHint, 1000);
   }
 
@@ -23,8 +25,35 @@ export class Navigation extends React.PureComponent {
   }
 
   componentWillUnmount() {
+    window.removeEventListener("keydown", this.moveOnKeydown);
     clearTimeout(this.hintTimer);
   }
+
+  onMove = (directionType) => {
+    const { updateAction } = this.props;
+    const action = this.getNextAction(directionType);
+    if (this.validNextMoving(action)) {
+      updateAction(action);
+    }
+  };
+
+  moveOnKeydown = (event) => {
+    switch (event.which) {
+      case KEY_CODES.ARROW_UP:
+        this.onMove("top");
+        break;
+      case KEY_CODES.ARROW_DOWN:
+        this.onMove("bottom");
+        break;
+      case KEY_CODES.ARROW_LEFT:
+        this.onMove("left");
+        break;
+      case KEY_CODES.ARROW_RIGHT:
+        this.onMove("right");
+        break;
+      default:
+    }
+  };
 
   onShowHint = () => {
     clearTimeout(this.hintTimer);
@@ -32,11 +61,11 @@ export class Navigation extends React.PureComponent {
       {
         showHint: true,
       },
-      this.hideHint
+      this.onHideHint
     );
   };
 
-  hideHint = () => {
+  onHideHint = () => {
     this.hintTimer = setTimeout(() => {
       this.setState({
         showHint: false,
