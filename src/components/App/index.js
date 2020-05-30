@@ -19,6 +19,7 @@ import {
   ContainerMaze,
   Text,
 } from "./styled";
+import { Button } from "../ui/Button";
 import { Navigation } from "../Maze/Navigation";
 import { SetupMaze } from "../SetupMaze";
 import { Matrix } from "../Maze/Matrix";
@@ -41,6 +42,12 @@ export class App extends React.Component {
       step: 0,
     };
   }
+
+  onSetup = () => {
+    this.setState({
+      mazeStatus: MAZE_STATUS.SETUP,
+    });
+  };
 
   updateMatrix = (value) => {
     const { user, way, matrix, exits } = this.getStateByMatrix(value);
@@ -297,7 +304,9 @@ export class App extends React.Component {
     const hasWayout = this.checkExitsMaze(way);
     return (
       <Wrapper>
-        <SetupMaze updateMatrix={this.updateMatrix} />
+        {mazeStatus === MAZE_STATUS.SETUP && (
+          <SetupMaze updateMatrix={this.updateMatrix} />
+        )}
         {mazeStatus === MAZE_STATUS.WALK && (
           <Container>
             <ColumnMaze>
@@ -318,7 +327,12 @@ export class App extends React.Component {
                     nextStep={this.getNextStep(user, way)}
                   />
                 ) : (
-                  <Text status="success">Congratulations!</Text>
+                  <div>
+                    <Text status="success">Congratulations!</Text>
+                    <Button type="button" onClick={this.onSetup}>
+                      Setup new maze
+                    </Button>
+                  </div>
                 )
               ) : (
                 <Text>No exits from maze</Text>
