@@ -6,7 +6,11 @@ import {
   PASS_VALUE,
   USER_SYMBOL,
 } from "../../constants/symbols";
-import { Finder } from "../../finder/finder";
+import {
+  userDirectionByAction,
+  actionByCurrentUserDirection,
+} from "../../helpers/configActions";
+import { Finder } from "../../helpers/finder";
 import {
   Wrapper,
   Container,
@@ -15,63 +19,9 @@ import {
   ContainerMaze,
   Text,
 } from "./styled";
-import Navigation from "../Maze/Navigation";
+import { Navigation } from "../Maze/Navigation";
 import { SetupMaze } from "../SetupMaze";
 import { Matrix } from "../Maze/Matrix";
-
-const userDirectionByAction = {
-  forward: {
-    top: "top",
-    bottom: "bottom",
-    left: "left",
-    right: "right",
-  },
-  around: {
-    top: "bottom",
-    bottom: "top",
-    left: "right",
-    right: "left",
-  },
-  left: {
-    top: "left",
-    bottom: "right",
-    left: "bottom",
-    right: "top",
-  },
-  right: {
-    top: "right",
-    bottom: "left",
-    left: "top",
-    right: "bottom",
-  },
-};
-
-const actionByCurrentUserDirection = {
-  top: {
-    top: "forward",
-    bottom: "around",
-    left: "right",
-    right: "left",
-  },
-  bottom: {
-    top: "around",
-    bottom: "forward",
-    left: "left",
-    right: "right",
-  },
-  left: {
-    top: "left",
-    bottom: "right",
-    left: "forward",
-    right: "around",
-  },
-  right: {
-    top: "right",
-    bottom: "left",
-    left: "around",
-    right: "forward",
-  },
-};
 
 const MAZE_STATUS = {
   SETUP: "setup",
@@ -334,13 +284,12 @@ export class App extends React.Component {
   };
 
   canUserMovingByPosition = (user, matrix) => {
-    const config = {
+    return {
       top: !matrix[user.y - 1][user.x],
       bottom: !matrix[user.y + 1][user.x],
       right: !matrix[user.y][user.x + 1],
       left: !matrix[user.y][user.x - 1],
     };
-    return config[user.direction];
   };
 
   getNextStep = (user, way) => this.getSnapshotUserSteps(user, way)[0];
@@ -364,6 +313,7 @@ export class App extends React.Component {
               {hasWayout ? (
                 way.length > 1 ? (
                   <Navigation
+                    userDirection={user.direction}
                     updateAction={this.updateAction}
                     canUserMovingByPosition={this.canUserMovingByPosition(
                       user,
