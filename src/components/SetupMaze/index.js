@@ -56,7 +56,7 @@ export class SetupMaze extends React.Component {
           onChange={this.onChange}
         />
         <ButtonCalculate type="button" onClick={this.onCalculateMaze}>
-          Calculate maze
+          Start game
         </ButtonCalculate>
       </Container>
     );
