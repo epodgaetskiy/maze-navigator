@@ -236,32 +236,28 @@ export class App extends React.Component {
       };
     }
 
-    if (user.direction === "top") {
-      return {
-        x: user.x,
-        y: user.y - 1,
-      };
-    }
-
-    if (user.direction === "bottom") {
-      return {
-        x: user.x,
-        y: user.y + 1,
-      };
-    }
-
-    if (user.direction === "left") {
-      return {
-        x: user.x - 1,
-        y: user.y,
-      };
-    }
-
-    if (user.direction === "right") {
-      return {
-        x: user.x + 1,
-        y: user.y,
-      };
+    switch (user.direction) {
+      case "top":
+        return {
+          x: user.x,
+          y: user.y - 1,
+        };
+      case "bottom":
+        return {
+          x: user.x,
+          y: user.y + 1,
+        };
+      case "left":
+        return {
+          x: user.x - 1,
+          y: user.y,
+        };
+      case "right":
+        return {
+          x: user.x + 1,
+          y: user.y,
+        };
+      default:
     }
   };
 
