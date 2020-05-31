@@ -1,13 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { IUser, IMatrix, IWay } from "../../../types";
 import { Row } from "./styled";
 import { Cell } from "./Cell";
 
 export class Matrix extends React.PureComponent {
   static propTypes = {
-    way: PropTypes.array,
-    matrix: PropTypes.array,
-    user: PropTypes.object,
+    way: IWay,
+    matrix: IMatrix,
+    user: IUser,
   };
 
   isWayPosition = (way, { x, y }) =>

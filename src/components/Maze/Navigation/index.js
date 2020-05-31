@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { directionType, actionType } from "../../../types";
 import { actionByCurrentUserDirection } from "../../../helpers/configActions";
 import { KEY_CODES } from "../../../constants/keyCodes";
 import {
@@ -9,6 +11,15 @@ import {
 } from "./styled";
 
 export class Navigation extends React.PureComponent {
+  static propTypes = {
+    canUserMovingByPosition: PropTypes.object.isRequired,
+    updateAction: PropTypes.func.isRequired,
+    userDirection: directionType,
+    nextStep: PropTypes.shape({
+      type: actionType,
+    }),
+  };
+
   state = {
     showHint: false,
   };
@@ -30,10 +41,9 @@ export class Navigation extends React.PureComponent {
   }
 
   onMove = (directionType) => {
-    const { updateAction } = this.props;
     const action = this.getNextAction(directionType);
     if (this.validNextMoving(action)) {
-      updateAction(action);
+      this.props.updateAction(action);
     }
   };
 
@@ -74,9 +84,7 @@ export class Navigation extends React.PureComponent {
   };
 
   checkHighlight = (action) => {
-    const { nextStep } = this.props;
-    const { showHint } = this.state;
-    return nextStep.type === action && showHint;
+    return this.props.nextStep.type === action && this.state.showHint;
   };
 
   validNextMoving = (action) => {

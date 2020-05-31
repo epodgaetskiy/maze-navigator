@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { PropTypes } from "prop-types";
+import PropTypes from "prop-types";
+import { directionType } from "../../../types";
 import IconNav from "../../../images/icon-nav.png";
 
 const getDegByDirection = (direction) => {
@@ -55,7 +56,7 @@ export class Cell extends React.PureComponent {
     isWay: PropTypes.bool.isRequired,
     isWall: PropTypes.bool.isRequired,
     isUser: PropTypes.bool,
-    userDirection: PropTypes.oneOf(["top", "bottom", "left", "right"]),
+    userDirection: directionType,
   };
   render() {
     return <CellStyled {...this.props} />;

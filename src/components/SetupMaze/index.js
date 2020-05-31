@@ -3,14 +3,42 @@ import { Container, Textarea, ButtonCalculate } from "./styled";
 
 const NEW_LINE = "\n";
 
-const DEFAULT_MATRIX = `##########
-#        #
-#  ##### #
-#  #   # #
-#  #v# # #
-#  ### # #
-#      # #
-######## #
+const getMatrix = (matrix) => {
+  let row = 0;
+
+  return matrix.split("").reduce((acc, item) => {
+    if (item === NEW_LINE) {
+      row++;
+      return acc;
+    }
+
+    if (!acc[row]) acc[row] = [];
+    acc[row].push(item);
+    return acc;
+  }, []);
+};
+
+const DEFAULT_MATRIX = `#########################################
+#v    #       #     #         # #   #   #
+##### # ##### # ### # # ##### # # # ### #
+# #   #   #   #   #   # #     #   #   # #
+# # # ### # ########### # ####### # # # #
+#   #   # # #       #   # #   #   # #   #
+####### # # # ##### # ### # # # #########
+#   #     # #     # #   #   # # #       #
+# # ####### ### ### ##### ### # ####### #
+# #             #   #     #   #   #   # #
+# ############### ### ##### ##### # # # #
+#               #     #   #   #   # #   #
+##### ####### # ######### # # # ### #####
+#   # #   #   # #         # # # #       #
+# # # # # # ### # # ####### # # ### ### #
+# # #   # # #     #   #     # #     #   #
+# # ##### # # ####### # ##### ####### # #
+# #     # # # #   # # #     # #       # #
+# ##### ### # ### # # ##### # # ### ### #
+#     #     #     #   #     #   #   #   #
+####################################### #
 `;
 
 export class SetupMaze extends React.Component {
@@ -25,24 +53,9 @@ export class SetupMaze extends React.Component {
     });
   };
 
-  normalizeMatrix = (matrix) => {
-    let row = 0;
-
-    return matrix.split("").reduce((acc, item) => {
-      if (item === NEW_LINE) {
-        row++;
-        return acc;
-      }
-
-      if (!acc[row]) acc[row] = [];
-      acc[row].push(item);
-      return acc;
-    }, []);
-  };
-
   onCalculateMaze = () => {
     const { matrixValue } = this.state;
-    const matrix = this.normalizeMatrix(matrixValue);
+    const matrix = getMatrix(matrixValue);
 
     this.props.updateMatrix(matrix);
   };
